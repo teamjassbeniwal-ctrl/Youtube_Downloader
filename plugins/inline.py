@@ -1,16 +1,11 @@
-# Name     : Youtube_Downloader 'Inline' [ Telegram ]
-# Repo     : https://github.com/Rexinazor/Youtube_Downloader
-# Author   : Rexinazor
-
 import os
 import asyncio
 from pyrogram import Client
+from pyrogram.errors import FloodWait
+from pyrogram.types import InlineQuery, InlineQueryResultArticle, InputTextMessageContent
 from presets import Presets
 from library.info import get_info
-from pyrogram.errors import FloodWait
 from library.extract import youtube_search
-from pyrogram.types import InlineQuery, InlineQueryResultArticle, InputTextMessageContent
-
 
 if bool(os.environ.get("ENV", False)):
     from sample_config import Config
@@ -18,61 +13,79 @@ else:
     from config import Config
 
 
+async def is_auth_inline(user_id: int):
+    """Check if user is authorized for inline queries"""
+    if Config.AUTH_USERS and (user_id not in Config.AUTH_USERS):
+        return False
+    return True
+
+
 @Client.on_inline_query()
-async def inline_search(bot, query: InlineQuery):
-    me = []
-    try:
-        me = await Client.get_me(bot)
-    except FloodWait as e:
-        await asyncio.sleep(e.x)
-    id = query.from_user.id
+async def inline_search(bot: Client, query: InlineQuery):
+    user_id = query.from_user.id
     results = []
-    #
-    defaults = await get_info(me.username)
-    results.extend(defaults)
-    #
+
+    # Default info (bot info or some defaults)
     try:
-        if Config.AUTH_USERS and (id not in Config.AUTH_USERS):
-            await query.answer(results=results,
-                               switch_pm_text=Presets.NOT_AUTH_TXT,
-                               switch_pm_parameter="help"
-                               )
-            return
+        defaults = await get_info((await bot.get_me()).username)
+        results.extend(defaults)
     except FloodWait as e:
         await asyncio.sleep(e.x)
-    #
-    search = query.query.strip()
-    string = await youtube_search(search)
-    for data in string:
-        count = data['viewCount']
-        thumb = data['thumbnails']
-        results.append(
-            InlineQueryResultArticle(
-                title=data['title'][:35] + "..",
-                input_message_content=InputTextMessageContent(
-                    message_text=data['link']
-                ),
-                thumb_url=thumb[0]['url'],
-                description=Presets.DESCRIPTION.format(data['duration'], count['text'])
+    except Exception:
+        pass
+
+    # Auth check
+    if not await is_auth_inline(user_id):
+        try:
+            await query.answer(
+                results=results,
+                switch_pm_text=Presets.NOT_AUTH_TXT,
+                switch_pm_parameter="help"
             )
+        except FloodWait as e:
+            await asyncio.sleep(e.x)
+        except Exception:
+            pass
+        return
+
+    search_text = query.query.strip()
+    if not search_text:
+        try:
+            await query.answer(results=results, cache_time=5)
+        except Exception:
+            pass
+        return
+
+    try:
+        search_results = await youtube_search(search_text)
+    except Exception:
+        search_results = []
+
+    for data in search_results:
+        try:
+            count = data.get('viewCount', {}).get('text', 'N/A')
+            thumb = data.get('thumbnails', [{}])
+            results.append(
+                InlineQueryResultArticle(
+                    title=(data.get('title', '')[:35] + "..") if len(data.get('title', '')) > 35 else data.get('title', ''),
+                    input_message_content=InputTextMessageContent(
+                        message_text=data.get('link', '')
+                    ),
+                    thumb_url=thumb[0].get('url', ''),
+                    description=Presets.DESCRIPTION.format(data.get('duration', 'N/A'), count)
+                )
+            )
+        except Exception:
+            continue
+
+    switch_pm_text = Presets.RESULTS_TXT if search_results else Presets.NO_RESULTS
+    try:
+        await query.answer(
+            results=results,
+            switch_pm_text=switch_pm_text,
+            switch_pm_parameter="start"
         )
-    if string:
-        switch_pm_text = Presets.RESULTS_TXT
-        try:
-            await query.answer(
-                results=results,
-                switch_pm_text=switch_pm_text,
-                switch_pm_parameter="start"
-            )
-        except Exception:
-            pass
-    else:
-        switch_pm_text = Presets.NO_RESULTS
-        try:
-            await query.answer(
-                results=results,
-                switch_pm_text=switch_pm_text,
-                switch_pm_parameter="start"
-            )
-        except Exception:
-            pass
+    except FloodWait as e:
+        await asyncio.sleep(e.x)
+    except Exception:
+        pass
