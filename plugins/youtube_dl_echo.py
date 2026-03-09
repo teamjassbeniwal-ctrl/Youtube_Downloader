@@ -71,6 +71,7 @@ async def echo(bot, m: Message):
     # Prepare youtube-dl command
     command_to_exec = [
         "youtube-dl",
+        "--cookies", "cookies.txt",
         "--no-warnings",
         "--youtube-skip-dash-manifest",
         "-j",
@@ -222,3 +223,4 @@ async def echo(bot, m: Message):
             reply_markup=reply_markup,
             parse_mode=ParseMode.HTML
                 )
+
