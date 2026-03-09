@@ -2,9 +2,9 @@
 # --- For-Bot-Working --------- #
 pyrogram
 TgCrypto
+aiohttp
 # --- For-YTDL. --------------- #
 youtube-search-python
 youtube-dl
 wget
-aiohttp
 
