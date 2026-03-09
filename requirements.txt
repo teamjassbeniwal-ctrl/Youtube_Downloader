@@ -7,4 +7,6 @@ aiohttp
 youtube-search-python
 youtube-dl
 wget
+yt-dlp
+
 
