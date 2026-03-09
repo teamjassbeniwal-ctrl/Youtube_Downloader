@@ -8,11 +8,11 @@ from urllib.parse import quote
 from presets import Presets
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
+
 start_btn = [
     [
         InlineKeyboardButton('View Thumb', callback_data='view_btn'),
         InlineKeyboardButton('Del Thumb', callback_data='del_btn')
-
     ],
     [
         InlineKeyboardButton('Help', callback_data='help_btn'),
@@ -28,6 +28,7 @@ del_thumb = [
     ]
 ]
 
+
 join_channel = [
     [
         InlineKeyboardButton('⚙ Join Updates', url='https://telegram.me/BioHazard_Bots'),
@@ -42,6 +43,7 @@ back_button = [
     ]
 ]
 
+
 close_button = [
     [
         InlineKeyboardButton('❌ Close', callback_data='close_btn'),
@@ -49,11 +51,13 @@ close_button = [
     ]
 ]
 
+
 cancel_button = [
     [
         InlineKeyboardButton('Cancel', callback_data='cancel_btn')
     ]
 ]
+
 
 reply_markup_cancel = InlineKeyboardMarkup(cancel_button)
 reply_markup_close = InlineKeyboardMarkup(close_button)
@@ -62,9 +66,16 @@ reply_markup_join = InlineKeyboardMarkup(join_channel)
 reply_markup_del_thumb = InlineKeyboardMarkup(del_thumb)
 reply_markup_start = InlineKeyboardMarkup(start_btn)
 
+
 def get_reply_markup(username):
-    url = 't.me/share/url?url=' + quote(Presets.SHARE_BUTTON_TEXT.format(username=username))
-    buttons = [[InlineKeyboardButton('Share bot', url=url),
-                InlineKeyboardButton("Search Inline", switch_inline_query_current_chat='')]]
+    url = "https://t.me/share/url?url=" + quote(
+        Presets.SHARE_BUTTON_TEXT.format(username=username)
+    )
+
+    buttons = [[
+        InlineKeyboardButton('Share bot', url=url),
+        InlineKeyboardButton("Search Inline", switch_inline_query_current_chat='')
+    ]]
+
     reply_markup_share = InlineKeyboardMarkup(buttons)
     return reply_markup_share
