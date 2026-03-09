@@ -2,13 +2,22 @@
 # Repo     : https://github.com/Rexinazor/Youtube_Downloader
 # Author   : Rexinazor
 
-
 from presets import Presets
 from library.buttons import get_reply_markup
 from pyrogram.types import InlineQueryResultArticle, InputTextMessageContent
 
-async def get_info(username):
+async def get_info(username: str):
+    """
+    Generate inline query results for the bot with default and developer links.
+
+    Args:
+        username (str): The Telegram username of the user invoking inline query.
+
+    Returns:
+        list: A list of InlineQueryResultArticle objects.
+    """
     result = []
+
     set1 = InlineQueryResultArticle(
         title=Presets.DEFAULT_TITLE,
         input_message_content=InputTextMessageContent(
@@ -18,6 +27,7 @@ async def get_info(username):
         description=Presets.DEFAULT_DESCRIPTION,
         reply_markup=get_reply_markup(username)
     )
+
     set2 = InlineQueryResultArticle(
         title=Presets.DEV_TITLE,
         input_message_content=InputTextMessageContent(
@@ -27,5 +37,6 @@ async def get_info(username):
         description=Presets.DEV_DESCRIPTION,
         reply_markup=get_reply_markup(username)
     )
+
     result.extend([set1, set2])
     return result
