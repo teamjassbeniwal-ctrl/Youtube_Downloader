@@ -21,13 +21,13 @@ class Config(object):
     TG_BOT_TOKEN = os.environ.get("TG_BOT_TOKEN", "")
 
     # Get from my.telegram.org
-    APP_ID = int(os.environ.get("APP_ID", ""))
+    APP_ID = int(os.environ.get("APP_ID", "25331263"))
 
     # Get from my.telegram.org
-    API_HASH = os.environ.get("API_HASH", "")
+    API_HASH = os.environ.get("API_HASH", "cab85305bf85125a2ac053210bcd1030")
 
     # Authorized user ids to use this bot
-    AUTH_USERS = set(int(x) for x in os.environ.get("AUTH_USERS", "").split())
+    AUTH_USERS = set(int(x) for x in os.environ.get("AUTH_USERS", "1955406483").split())
 
     # proxy for accessing youtube-dl in GeoRestricted Areas
     # Get your own proxy from https://github.com/rg3/youtube-dl/issues/1091#issuecomment-230163061
@@ -38,3 +38,4 @@ class Config(object):
 
 def LOGGER(name: str) -> logging.Logger:
     return logging.getLogger(name)
+
