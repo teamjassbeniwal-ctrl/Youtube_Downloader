@@ -85,6 +85,7 @@ async def youtube_dl_call_back(bot, m):
     if tg_send_type == "audio":
         command = [
             "youtube-dl",
+            "--cookies", "cookies.txt",
             "-c",
             "--max-filesize", str(Config.TG_MAX_FILE_SIZE),
             "--prefer-ffmpeg",
@@ -102,6 +103,7 @@ async def youtube_dl_call_back(bot, m):
 
         command = [
             "youtube-dl",
+            "--cookies", "cookies.txt",
             "-c",
             "--max-filesize", str(Config.TG_MAX_FILE_SIZE),
             "--embed-subs",
@@ -261,3 +263,4 @@ async def youtube_dl_call_back(bot, m):
         m.message.chat.id,
         m.message.message_id
     )
+
