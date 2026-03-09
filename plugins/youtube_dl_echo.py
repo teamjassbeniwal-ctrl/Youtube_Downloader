@@ -136,26 +136,26 @@ async def echo(bot, m: Message):
                 cb_string_video = f"video|{format_id}|{format_ext}"
                 cb_string_file = f"file|{format_id}|{format_ext}"
 
-                if format_string and "audio only" not in format_string:
+                if format_string and "audio only" not in format_string.lower():
                     ikeyboard = [
                         InlineKeyboardButton(
                             f"S {format_string} video {approx_file_size} ",
-                            callback_data=cb_string_video.encode("UTF-8")
+                            callback_data=cb_string_video
                         ),
                         InlineKeyboardButton(
                             f"D {format_ext} {approx_file_size} ",
-                            callback_data=cb_string_file.encode("UTF-8")
+                            callback_data=cb_string_file
                         )
                     ]
                 else:
                     ikeyboard = [
                         InlineKeyboardButton(
                             f"SVideo [ ] ( {approx_file_size} )",
-                            callback_data=cb_string_video.encode("UTF-8")
+                            callback_data=cb_string_video
                         ),
                         InlineKeyboardButton(
                             f"DFile [ ] ( {approx_file_size} )",
-                            callback_data=cb_string_file.encode("UTF-8")
+                            callback_data=cb_string_file
                         )
                     ]
                 inline_keyboard.append(ikeyboard)
@@ -163,11 +163,11 @@ async def echo(bot, m: Message):
             # Add MP3 options if duration exists
             if duration:
                 inline_keyboard.append([
-                    InlineKeyboardButton("🎶MP3🎶 (64 kbps)", callback_data="audio|64k|mp3".encode("UTF-8")),
-                    InlineKeyboardButton("🎶MP3🎶 (128 kbps)", callback_data="audio|128k|mp3".encode("UTF-8"))
+                    InlineKeyboardButton("🎶MP3🎶 (64 kbps)", callback_data="audio|64k|mp3"),
+                    InlineKeyboardButton("🎶MP3🎶 (128 kbps)", callback_data="audio|128k|mp3")
                 ])
                 inline_keyboard.append([
-                    InlineKeyboardButton("🎶MP3🎶 (320 kbps)", callback_data="audio|320k|mp3".encode("UTF-8"))
+                    InlineKeyboardButton("🎶MP3🎶 (320 kbps)", callback_data="audio|320k|mp3")
                 ])
         else:
             format_id = response_json["format_id"]
@@ -175,8 +175,8 @@ async def echo(bot, m: Message):
             cb_string_video = f"video|{format_id}|{format_ext}"
             cb_string_file = f"file|{format_id}|{format_ext}"
             inline_keyboard.append([
-                InlineKeyboardButton("🎞️SVideo🎞️", callback_data=cb_string_video.encode("UTF-8")),
-                InlineKeyboardButton("🗂️DFile🗂️", callback_data=cb_string_file.encode("UTF-8"))
+                InlineKeyboardButton("🎞️SVideo🎞️", callback_data=cb_string_video),
+                InlineKeyboardButton("🗂️DFile🗂️", callback_data=cb_string_file)
             ])
 
         reply_markup = InlineKeyboardMarkup(inline_keyboard)
@@ -221,4 +221,4 @@ async def echo(bot, m: Message):
             reply_to_message_id=m.id,
             reply_markup=reply_markup,
             parse_mode=ParseMode.HTML
-        )
+                )
