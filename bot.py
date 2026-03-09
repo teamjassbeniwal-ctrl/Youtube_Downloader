@@ -5,6 +5,7 @@
 
 import os
 from pyrogram import Client
+from aiohttp import web
 
 
 if bool(os.environ.get("ENV", False)):
@@ -28,6 +29,17 @@ class Bot(Client):
         )
         self.LOGGER = LOGGER
 
+    # Add this to bot.py
+async def handle(request):
+    return web.Response(text="Bot is alive!")
+
+app = web.Application()
+app.add_routes([web.get('/', handle)])
+
+# Run HTTP server on port 5000 in background
+import asyncio
+asyncio.create_task(web._run_app(app, port=5000))
+
     async def start(self):
         await super().start()
         me = await self.get_me()
@@ -43,4 +55,5 @@ class Bot(Client):
 
 app = Bot()
 app.run()
+
 
